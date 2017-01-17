@@ -4,18 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.Loader;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,13 +92,13 @@ public class ArticleListActivity extends BaseActivity implements
     }
 
     @Override
-    public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
     @Override
-    public void onLoadFinished(android.support.v4.content.Loader<Cursor> cursorLoader, Cursor cursor) {
-        Adapter adapter = new Adapter(cursor);
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Adapter adapter = new Adapter(cursor,this);
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
         int columnCount = getResources().getInteger(R.integer.list_column_count);
@@ -110,7 +108,7 @@ public class ArticleListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
+    public void onLoaderReset(Loader<Cursor> loader) {
         mRecyclerView.setAdapter(null);
     }
 
@@ -118,7 +116,7 @@ public class ArticleListActivity extends BaseActivity implements
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
 
-        public Adapter(Cursor cursor) {
+        public Adapter(Cursor cursor,Context context) {
             mCursor = cursor;
         }
 
@@ -153,12 +151,16 @@ public class ArticleListActivity extends BaseActivity implements
                             DateUtils.FORMAT_ABBREV_ALL).toString()
                             + " by "
                             + mCursor.getString(ArticleLoader.Query.AUTHOR));
-            holder.thumbnailView.setImageUrl(
-                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
-                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
+            holder.titleView.setTextColor(ContextCompat.getColor(ArticleListActivity.this,R.color.color_white));
+            holder.subtitleView.setTextColor(ContextCompat.getColor(ArticleListActivity.this,R.color.color_white));
+            holder.subtitleView.setText(
+                    DateUtils.getRelativeTimeSpanString(
+                            mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
+                            System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
+                            DateUtils.FORMAT_ABBREV_ALL).toString()
+                            + " by "
+                            + mCursor.getString(ArticleLoader.Query.AUTHOR));
             holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
-
-            Glide.clear(holder.thumbnailView);
             Glide.with(holder.thumbnailView.getContext())
                     .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -175,7 +177,7 @@ public class ArticleListActivity extends BaseActivity implements
                                                        boolean isFromMemoryCache, boolean isFirstResource) {
                             Bitmap bitmap = ((GlideBitmapDrawable) resource.getCurrent()).getBitmap();
                             Palette palette = Palette.generate(bitmap);
-                            int defaultColor = 0xFF448AFF;
+                            int defaultColor = 0xFF333333;
                             int color = palette.getDarkMutedColor(defaultColor);
                             holder.itemView.setBackgroundColor(color);
                             return false;
