@@ -24,7 +24,7 @@
     <dimen name="floating_action_button_margin">16dp</dimen>
 
     <dimen name="max_width">400dp</dimen>
-    <dimen name="floating_action_elevation">4dp</dimen>
+    <dimen name="floating_action_elevation">6dp</dimen>
     <integer name="grid_column_count">2</integer>
 
 

@@ -20,12 +20,12 @@
 
     <color name="theme_primary">#009688</color>
     <color name="theme_primary_dark">#004D40</color>
-    <color name="theme_accent">#4CAF50</color>
+    <color name="theme_accent">#FF6E40</color>
     <color name="ltgray">#ffe0e0e0</color>
 
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#448AFF</color>
+    <color name="colorAccent">#FF6E40</color>
     <color name="color_363830">#363830</color>
     <color name="black">#6000</color>
     <color name="color_white">#ffffff</color>
